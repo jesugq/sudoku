@@ -3,6 +3,7 @@ class Sudoku:
     def __init__(self):
         self.ROW = 0
         self.COL = 1
+        self.INI = 0
         self.LEN = 9
         self.board = [[]]
         self.empty_board()
@@ -22,7 +23,7 @@ class Sudoku:
         self.board = board
 
     def verify_pos(self, pos: int) -> bool:
-        return pos >= 0 and pos < self.LEN
+        return pos >= self.INI and pos < self.LEN
 
     def convert_box_row(self, pos: int) -> List:
         if pos in [0, 1, 2]:
@@ -32,7 +33,7 @@ class Sudoku:
         elif pos in [6, 7, 8]:
             return range(6, 9)
         else:
-            return range(0)
+            return range(self.INI)
         
     def convert_box_col(self, pos: int) -> List:
         if pos in [0, 3, 6]:
@@ -42,7 +43,7 @@ class Sudoku:
         elif pos in [2, 5, 8]:
             return range(6, 9)
         else:
-            return range(0)
+            return range(self.INI)
 
     def edit_board(self, number: int, position: List) -> None:
         row = position[self.ROW]
@@ -50,9 +51,6 @@ class Sudoku:
         self.board[row][col] = number
 
     def correct_row(self, row: int) -> bool:
-        if not self.verify_pos(row):
-            return False
-
         seen = []
         for i in range(self.LEN):
             value = self.board[row][i]
@@ -63,9 +61,6 @@ class Sudoku:
         return True
 
     def correct_col(self, col: int) -> bool:
-        if not self.verify_pos(col):
-            return False
-
         seen = []
         for i in range(self.LEN):
             value = self.board[i][col]
@@ -76,9 +71,6 @@ class Sudoku:
         return True
 
     def correct_box(self, box: int) -> bool:
-        if not self.verify_pos(box):
-            return False
-        
         seen = []
         range_row = self.convert_box_row(box)
         range_col = self.convert_box_col(box)
@@ -89,4 +81,32 @@ class Sudoku:
                     seen.append(value)
                 else:
                     return False
+        return True
+
+    def correct_rows(self) -> bool:
+        for i in range(self.LEN):
+            if not self.correct_row(i):
+                return False
+        return True
+
+    def correct_cols(self) -> bool:
+        for i in range(self.LEN):
+            if not self.correct_col(i):
+                return False
+        return True
+
+    def correct_boxs(self) -> bool:
+        for i in range(self.LEN):
+            if not self.correct_box(i):
+                return False
+        return True
+
+    def correct_board(self) -> bool:
+        for i in range(self.LEN):
+            if not self.correct_row(i):
+                return False
+            if not self.correct_col(i):
+                return False
+            if not self.correct_box(i):
+                return False
         return True
