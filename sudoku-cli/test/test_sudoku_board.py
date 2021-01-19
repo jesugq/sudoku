@@ -38,6 +38,11 @@ def broken_board(broken_puzzle):
     return board
 
 @pytest.fixture
+def potential_board(potential_puzzle):
+    board = SudokuBoard(potential_puzzle)
+    return board
+
+@pytest.fixture
 def empty_puzzle():
     return [[0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
@@ -133,6 +138,18 @@ def broken_puzzle():
             [1,9,1,2,3,4,9,1,9],
             [1,1,2,3,4,5,1,1,1]]
 
+@pytest.fixture
+def potential_puzzle():
+    return [[0,0,0,0,1,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,5,0,0,0,0,0],
+            [3,0,0,0,0,0,0,0,4],
+            [0,0,0,0,0,6,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,2,0,0,0,0]]
+
 def test_empty_board_initialized(empty_board):
     assert empty_board
 
@@ -169,6 +186,16 @@ def test_ordered_board_gets_col(ordered_board):
     last_index = 8
     assert ordered_board.get_col(first_index) == first_col
     assert ordered_board.get_col(last_index) == last_col
+
+def test_boxed_board_gets_position_to_box(boxed_board):
+    first_row = 0
+    first_col = 0
+    first_box = 0
+    last_row = 8
+    last_col = 8
+    last_box = 8
+    assert boxed_board.get_position_to_box(first_row, first_col) == first_box
+    assert boxed_board.get_position_to_box(last_row, last_col) == last_box
 
 def test_boxed_board_gets_range_box_to_row(boxed_board):
     upper_left_box = 0
@@ -263,3 +290,34 @@ def test_solved_board_evaluates_board(solved_board):
 
 def test_unsolved_board_not_evaluates_board(unsolved_board):
     assert not unsolved_board.evaluate_board()
+
+def test_solved_board_evaluate_position(solved_board):
+    row = 0
+    col = 0
+    assert solved_board.evaluate_position(row, col)
+
+def test_unique_board_gets_potential(unique_board):
+    unique = [1,2,3]
+    potential = [4,5,6,7,8,9]
+    assert unique_board.get_potential(unique) == potential
+
+def test_unique_board_gets_potential_row(unique_board):
+    index = 0
+    potential = [4,5,6,7,8,9]
+    assert unique_board.get_potential_row(index)
+
+def test_unique_board_gets_potential_col(unique_board):
+    index = 4
+    potential = [4,5,6,7,8,9]
+    assert unique_board.get_potential_col(index)
+
+def test_unique_board_gets_potential_box(unique_board):
+    index = 8
+    potential = [4,5,6,7,8,9]
+    assert unique_board.get_potential_box(index)
+
+def test_potential_board_gets_potential_position(potential_board):
+    row = 4
+    col = 4
+    potential = [7,8,9]
+    assert potential_board.get_potential_position(row, col) == potential

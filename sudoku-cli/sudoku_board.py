@@ -13,6 +13,10 @@ class SudokuBoard:
 
     def get_puzzle(self) -> List[List[int]]:
         return self.puzzle
+
+    def print_puzzle(self) -> None:
+        for i in len(self.puzzle):
+            print(self.puzzle[i])
     
     def set_puzzle(self, puzzle: List[List[int]]) -> None:
         self.puzzle = puzzle
@@ -25,6 +29,11 @@ class SudokuBoard:
 
     def get_col(self, col: int) -> List[int]:
         return [i[col] for i in self.puzzle]
+
+    def get_position_to_box(self, row: int, col: int):
+        region_row: int = int(row / 3)
+        region_col: int = int(col / 3)
+        return region_row * 3 + region_col
 
     def get_range_box_to_row(self, box: int) -> int:
         region_row: int = int(box / 3)
@@ -69,16 +78,26 @@ class SudokuBoard:
         return len(unique) == 9
 
     def evaluate_row(self, row: int) -> bool:
-        unique: List = self.get_unique_row(row)
+        unique: List[int] = self.get_unique_row(row)
         return self.evaluate(unique)
 
     def evaluate_col(self, col: int) -> bool:
-        unique: List = self.get_unique_col(col)
+        unique: List[int] = self.get_unique_col(col)
         return self.evaluate(unique)
 
     def evaluate_box(self, box: int) -> bool:
-        unique: List = self.get_unique_box(box)
+        unique: List[int] = self.get_unique_box(box)
         return self.evaluate(unique)
+
+    def evaluate_position(self, row: int, col: int) -> bool:
+        unique_row: List[int] = self.get_unique_row(row)
+        unique_col: List[int] = self.get_unique_col(col)
+        unique_box: List[int] = self.get_unique_box(self.get_position_to_box(row, col))
+
+        if not self.evaluate(unique_row): return False
+        if not self.evaluate(unique_col): return False
+        if not self.evaluate(unique_box): return False
+        return True
 
     def evaluate_board(self) -> bool:
         for i in range(9):
@@ -86,3 +105,28 @@ class SudokuBoard:
             if not self.evaluate_col(i): return False
             if not self.evaluate_box(i): return False
         return True
+
+    def get_potential(self, unique: List[int]) -> List[int]:
+        potential: List[int] = []
+        for i in range(1,10):
+            if i not in unique:
+                potential.append(i)
+        return potential
+
+    def get_potential_row(self, row: int) -> List[int]:
+        unique: List[int] = self.get_unique_row(row)
+        return self.get_potential(unique)
+
+    def get_potential_col(self, col: int) -> List[int]:
+        unique: List[int] = self.get_unique_col(col)
+        return self.get_potential(unique)
+
+    def get_potential_box(self, box: int) -> List[int]:
+        unique: List[int] = self.get_unique_box(box)
+        return self.get_potential(unique)
+
+    def get_potential_position(self, row: int, col: int) -> List[int]:
+        unique_row: List[int] = self.get_unique_row(row)
+        unique_col: List[int] = self.get_unique_col(col)
+        unique_box: List[int] = self.get_unique_box(self.get_position_to_box(row, col))
+        return self.get_potential(unique_row + unique_col + unique_box)
