@@ -156,96 +156,89 @@ def test_empty_board_initialized(empty_board):
 def test_empty_board_default_values(empty_board, empty_puzzle):
     assert empty_board.puzzle == empty_puzzle
 
-def test_empty_board_gets_puzzle(empty_board, empty_puzzle):
-    assert empty_board.get_puzzle() == empty_puzzle
-
-def test_empty_board_sets_puzzle(empty_board, unsolved_puzzle):
-    empty_board.set_puzzle(unsolved_puzzle)
-    assert empty_board.get_puzzle() == unsolved_puzzle
-
 def test_empty_board_edits_puzzle(empty_board, edited_puzzle):
     edited_number = 9
     first_edited_pos = 0
     last_edited_pos = 8
     empty_board.edit_puzzle(edited_number, first_edited_pos, first_edited_pos)
     empty_board.edit_puzzle(edited_number, last_edited_pos, last_edited_pos)
-    assert empty_board.get_puzzle() == edited_puzzle
+    assert empty_board.puzzle == edited_puzzle
 
-def test_ordered_board_gets_row(ordered_board):
+def test_ordered_board_grabs_row(ordered_board):
     first_row = [1,2,3,4,5,6,7,8,9]
     first_index = 0
     last_row = [9,1,2,3,4,5,6,7,8]
     last_index = 8
-    assert ordered_board.get_row(first_index) == first_row
-    assert ordered_board.get_row(last_index) == last_row
+    assert ordered_board.grab_row(first_index) == first_row
+    assert ordered_board.grab_row(last_index) == last_row
 
-def test_ordered_board_gets_col(ordered_board):
+def test_ordered_board_grabs_col(ordered_board):
     first_col = [1,2,3,4,5,6,7,8,9]
     first_index = 0
     last_col = [9,1,2,3,4,5,6,7,8]
     last_index = 8
-    assert ordered_board.get_col(first_index) == first_col
-    assert ordered_board.get_col(last_index) == last_col
+    assert ordered_board.grab_col(first_index) == first_col
+    assert ordered_board.grab_col(last_index) == last_col
 
-def test_boxed_board_gets_position_to_box(boxed_board):
+def test_boxed_board_grabs_box(boxed_board):
+    first_box = [1,2,3,4,5,6,7,8,9]
+    first_index = 0
+    last_box = [9,1,2,3,4,5,6,7,8]
+    last_index = 8
+    assert boxed_board.grab_box(first_index) == first_box
+    assert boxed_board.grab_box(last_index) == last_box
+
+def test_boxed_board_ranges_pos_to_box(boxed_board):
     first_row = 0
     first_col = 0
     first_box = 0
     last_row = 8
     last_col = 8
     last_box = 8
-    assert boxed_board.get_position_to_box(first_row, first_col) == first_box
-    assert boxed_board.get_position_to_box(last_row, last_col) == last_box
+    assert boxed_board.range_pos_to_box(first_row, first_col) == first_box
+    assert boxed_board.range_pos_to_box(last_row, last_col) == last_box
 
-def test_boxed_board_gets_range_box_to_row(boxed_board):
+def test_boxed_board_ranges_box_to_row(boxed_board):
     upper_left_box = 0
     upper_left_range = range(0, 3)
     center_left_box = 3
     center_left_range = range(3, 6)
     lower_left_box = 6
     lower_left_range = range(6, 9)
-    assert boxed_board.get_range_box_to_row(upper_left_box) == upper_left_range
-    assert boxed_board.get_range_box_to_row(center_left_box) == center_left_range
-    assert boxed_board.get_range_box_to_row(lower_left_box) == lower_left_range
+    assert boxed_board.range_box_to_row(upper_left_box) == upper_left_range
+    assert boxed_board.range_box_to_row(center_left_box) == center_left_range
+    assert boxed_board.range_box_to_row(lower_left_box) == lower_left_range
 
-def test_boxed_board_gets_range_box_to_col(boxed_board):
+def test_boxed_board_ranges_box_to_col(boxed_board):
     upper_left_box = 0
     upper_left_range = range(0, 3)
     upper_middle_box = 1
     upper_middle_range = range(3, 6)
     upper_right_box = 2
     upper_right_range = range(6, 9)
-    assert boxed_board.get_range_box_to_col(upper_left_box) == upper_left_range
-    assert boxed_board.get_range_box_to_col(upper_middle_box) == upper_middle_range
-    assert boxed_board.get_range_box_to_col(upper_right_box) == upper_right_range
+    assert boxed_board.range_box_to_col(upper_left_box) == upper_left_range
+    assert boxed_board.range_box_to_col(upper_middle_box) == upper_middle_range
+    assert boxed_board.range_box_to_col(upper_right_box) == upper_right_range
 
-def test_boxed_board_gets_box(boxed_board):
-    first_box = [1,2,3,4,5,6,7,8,9]
-    first_index = 0
-    last_box = [9,1,2,3,4,5,6,7,8]
-    last_index = 8
-    assert boxed_board.get_box(first_index) == first_box
-    assert boxed_board.get_box(last_index) == last_box
-
-def test_unique_board_gets_unique(unique_board):
+def test_unique_board_grabs_unique(unique_board):
     entire = [1,2,3,0,0,0,0,0,0]
     unique = [1,2,3]
-    assert unique_board.get_unique(entire) == unique
+    assert unique_board.grab_unique(entire) == unique
 
-def test_unique_board_gets_unique_row(unique_board):
+def test_unique_board_grabs_unique_row(unique_board):
     unique_row = [1,2,3]
     unique_index = 0
-    assert unique_board.get_unique_row(unique_index) == unique_row
+    assert unique_board.grab_unique_row(unique_index) == unique_row
 
-def test_unique_board_gets_unique_col(unique_board):
+def test_unique_board_grabs_unique_col(unique_board):
     unique_col = [1,2,3]
     unique_index = 4
-    assert unique_board.get_unique_col(unique_index) == unique_col
+    assert unique_board.grab_unique_col(unique_index) == unique_col
 
-def test_unique_board_gets_unique_box(unique_board):
+def test_unique_board_grabs_unique_box(unique_board):
     unique_box = [1,2,3]
     unique_index = 8
-    assert unique_board.get_unique_box(unique_index) == unique_box
+    assert unique_board.grab_unique_box(unique_index) == unique_box
 
 def test_unique_board_evaluates(unique_board):
     full = [1,2,3,4,5,6,7,8,9]
@@ -280,7 +273,7 @@ def test_boxed_board_evaluates_box(boxed_board):
     lower_right_box = 8
     assert boxed_board.evaluate_box(upper_left_box)
     assert boxed_board.evaluate_box(lower_right_box)
-
+    
 def test_broken_board_not_evaluates_box(broken_board):
     wrong_box = 8
     assert not broken_board.evaluate_box(wrong_box)
@@ -291,33 +284,33 @@ def test_solved_board_evaluates_board(solved_board):
 def test_unsolved_board_not_evaluates_board(unsolved_board):
     assert not unsolved_board.evaluate_board()
 
-def test_solved_board_evaluate_position(solved_board):
+def test_solved_board_evaluate_pos(solved_board):
     row = 0
     col = 0
-    assert solved_board.evaluate_position(row, col)
+    assert solved_board.evaluate_pos(row, col)
 
-def test_unique_board_gets_potential(unique_board):
+def test_unique_board_grabs_potential(unique_board):
     unique = [1,2,3]
     potential = [4,5,6,7,8,9]
-    assert unique_board.get_potential(unique) == potential
+    assert unique_board.grab_potential(unique) == potential
 
-def test_unique_board_gets_potential_row(unique_board):
+def test_unique_board_grabs_potential_row(unique_board):
     index = 0
     potential = [4,5,6,7,8,9]
-    assert unique_board.get_potential_row(index)
+    assert unique_board.grab_potential_row(index)
 
-def test_unique_board_gets_potential_col(unique_board):
+def test_unique_board_grabs_potential_col(unique_board):
     index = 4
     potential = [4,5,6,7,8,9]
-    assert unique_board.get_potential_col(index)
+    assert unique_board.grab_potential_col(index)
 
-def test_unique_board_gets_potential_box(unique_board):
+def test_unique_board_grabs_potential_box(unique_board):
     index = 8
     potential = [4,5,6,7,8,9]
-    assert unique_board.get_potential_box(index)
+    assert unique_board.grab_potential_box(index)
 
-def test_potential_board_gets_potential_position(potential_board):
+def test_potential_board_grabs_potential_pos(potential_board):
     row = 4
     col = 4
     potential = [7,8,9]
-    assert potential_board.get_potential_position(row, col) == potential
+    assert potential_board.grab_potential_pos(row, col) == potential
