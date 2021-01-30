@@ -33,12 +33,13 @@ def last_solver():
 def unsettled_solver(unsettled_puzzle):
     solver = SudokuSolver(unsettled_puzzle)
     solver.guide = 0
+    solver.board.edit_puzzle(9, 1, 8)
     return solver
 
 @pytest.fixture
 def unsettled_puzzle():
     return [[1,2,3,4,5,6,7,8,0],
-            [0,0,0,0,0,0,0,0,9],
+            [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
@@ -99,8 +100,22 @@ def test_first_solver_not_backtracks_guide(first_solver):
     assert not first_solver.backtrack_guide()
     assert first_solver.guide == 0
 
-def test_first_solver_settles(first_solver):
-    assert first_solver.settle()
+def test_first_solver_settles_square_guide(first_solver):
+    guide = 0
+    pindex = 0
+    number = 1
+    potential = [1,2,3,4,5,6,7,8,9]
+    assert first_solver.settle_square_guide()
+    assert first_solver.squares[guide].pindex == pindex
+    assert first_solver.squares[guide].number == number
+    assert first_solver.squares[guide].potential == potential
 
-def test_unsettled_solver_not_settles(unsettled_solver):
-    assert not unsettled_solver.settle()
+def test_unsettled_solver_not_settles_square_guide(unsettled_solver):
+    guide = 0
+    pindex = -1
+    number = 0
+    potential = [9]
+    assert not unsettled_solver.settle_square_guide()
+    assert unsettled_solver.squares[guide].pindex == pindex
+    assert unsettled_solver.squares[guide].number == number
+    assert unsettled_solver.squares[guide].potential == potential

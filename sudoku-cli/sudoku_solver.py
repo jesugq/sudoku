@@ -30,14 +30,13 @@ class SudokuSolver:
         else:
             return False
     
-    def settle(self) -> bool:
-        board = self.board
+    def settle_square_guide(self) -> bool:
         square = self.squares[self.guide]
         while square.proceed_potential():
-            board.edit_puzzle(square.number, square.row, square.col)
-            board.print_puzzle()
-            if board.check_pos(square.row, square.col):
+            self.board.edit_puzzle(square.number, square.row, square.col)
+            if self.board.check_pos(square.row, square.col):
                 return True
-        board.edit_puzzle(0, square.row, square.col)
+        self.board.edit_puzzle(0, square.row, square.col)
         square.reset_square()
         return False
+
