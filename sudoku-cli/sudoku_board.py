@@ -110,31 +110,23 @@ class SudokuBoard:
         entire: List = self.grab_box(box)
         return self.grab_active(entire)
     
-    def check(self, active: List[int]) -> bool:
-        return len(active) == len(set(active))
-
-    def check_row(self, row: int) -> bool:
-        active: List = self.grab_active_row(row)
-        return self.check(active)
-
-    def check_col(self, col: int) -> bool:
-        active: List = self.grab_active_col(col)
-        return self.check(active)
-
-    def check_box(self, box: int) -> bool:
-        active: List = self.grab_active_box(box)
-        return self.check(active)
+    def check(self, active: List[int], target: int) -> bool:
+        count = 0
+        for number in active:
+            if number == target:
+                count += 1
+        return count == 1
 
     def check_pos(self, row: int, col: int) -> bool:
-        number = self.puzzle[row][col]
+        target = self.puzzle[row][col]
         active_row = self.grab_active_row(row)
         active_col = self.grab_active_col(col)
         active_box = self.grab_active_box(self.convert_pos_to_box(row, col))
-        if number in active_row:
-            active_row.remove(number)
-        if number in active_col:
-            active_col.remove(number)
-        return self.check(active_row + active_col + active_box)
+        if target in active_row:
+            active_row.remove(target)
+        if target in active_col:
+            active_col.remove(target)
+        return self.check(active_row + active_col + active_box, target)
 
     def grab_potential(self, unique: List[int]) -> List[int]:
         potential: List[int] = []

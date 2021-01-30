@@ -302,35 +302,13 @@ def test_active_board_grabs_active_box(active_board):
 
 def test_active_board_checks(active_board):
     nearfull = [1,2,3,4,5,6,7,8]
-    assert active_board.check(nearfull)
+    target = 1
+    assert active_board.check(nearfull, target)
 
 def test_active_board_not_checks(active_board):
     repeated = [1,2,2,1]
-    assert not active_board.check(repeated)
-
-def test_unique_board_checks_row(unique_board):
-    row = 0
-    assert unique_board.check_row(row)
-
-def test_active_board_not_checks_row(active_board):
-    row = 0
-    assert not active_board.check_row(row)
-
-def test_unique_board_checks_col(unique_board):
-    col = 4
-    assert unique_board.check_col(col)
-
-def test_active_board_not_checks_col(active_board):
-    col = 4
-    assert not active_board.check_col(col)
-
-def test_unique_board_checks_box(unique_board):
-    box = 8
-    assert unique_board.check_box(box)
-    
-def test_active_board_not_checks_box(active_board):
-    box = 8
-    assert not active_board.check_box(box)
+    target = 1
+    assert not active_board.check(repeated, target)
 
 def test_potent_board_checks_pos(potent_board):
     row = 4

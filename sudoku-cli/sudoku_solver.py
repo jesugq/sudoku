@@ -40,3 +40,14 @@ class SudokuSolver:
         square.reset_square()
         return False
 
+    def solve_sudoku(self) -> bool:
+        if len(self.squares) == 0:
+            return True
+        self.advance_guide()
+        while True:
+            if self.settle_square_guide():
+                if not self.advance_guide():
+                    return True
+            else:
+                if not self.backtrack_guide():
+                    return False

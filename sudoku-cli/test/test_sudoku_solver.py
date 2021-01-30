@@ -1,6 +1,8 @@
 import pytest
 from sudoku_solver import SudokuSolver
 
+run_solve_tests = True
+
 @pytest.fixture
 def default_solver():
     solver = SudokuSolver()
@@ -9,6 +11,21 @@ def default_solver():
 @pytest.fixture
 def unsolved_solver(unsolved_puzzle):
     solver = SudokuSolver(unsolved_puzzle)
+    return solver
+
+@pytest.fixture
+def solved_solver(solved_puzzle):
+    solver = SudokuSolver(solved_puzzle)
+    return solver
+
+@pytest.fixture
+def unsolved_hard_solver(unsolved_hard_puzzle):
+    solver = SudokuSolver(unsolved_hard_puzzle)
+    return solver
+
+@pytest.fixture
+def impossible_solver(impossible_puzzle):
+    solver = SudokuSolver(impossible_puzzle)
     return solver
 
 @pytest.fixture
@@ -119,3 +136,27 @@ def test_unsettled_solver_not_settles_square_guide(unsettled_solver):
     assert unsettled_solver.squares[guide].pindex == pindex
     assert unsettled_solver.squares[guide].number == number
     assert unsettled_solver.squares[guide].potential == potential
+
+@pytest.mark.skipif(not run_solve_tests, reason='solves an unsolved sudoku')
+def test_unsolved_solver_solves_sudoku(unsolved_solver, solved_puzzle):
+    assert unsolved_solver.solve_sudoku()
+    assert unsolved_solver.board.puzzle == solved_puzzle
+
+@pytest.mark.skipif(not run_solve_tests, reason='solves an empty sudoku')
+def test_default_solver_solves_sudoku(default_solver, full_puzzle):
+    assert default_solver.solve_sudoku()
+    assert default_solver.board.puzzle == full_puzzle
+
+@pytest.mark.skipif(not run_solve_tests, reason='solves a hard sudoku')
+def test_unsolved_hard_solver_solves_sudoku(unsolved_hard_solver, solved_hard_puzzle):
+    assert unsolved_hard_solver.solve_sudoku()
+    assert unsolved_hard_solver.board.puzzle == solved_hard_puzzle
+
+@pytest.mark.skipif(not run_solve_tests, reason='solves a completed sudoku')
+def test_solved_solver_solves_sudoku(solved_solver, solved_puzzle):
+    assert solved_solver.solve_sudoku()
+    assert solved_solver.board.puzzle == solved_puzzle
+
+@pytest.mark.skipif(not run_solve_tests, reason='attempts to solve an impossible sudoku')
+def test_impossible_solver_not_solves_sudoku(impossible_solver):
+    assert not impossible_solver.solve_sudoku()
