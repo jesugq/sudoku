@@ -1,5 +1,4 @@
 import pytest
-from typing import List
 from sudoku_board import SudokuBoard
 
 @pytest.fixture
@@ -33,6 +32,11 @@ def unique_board(unique_puzzle):
     return board
 
 @pytest.fixture
+def active_board(active_puzzle):
+    board = SudokuBoard(active_puzzle)
+    return board
+
+@pytest.fixture
 def broken_board(broken_puzzle):
     board = SudokuBoard(broken_puzzle)
     return board
@@ -43,16 +47,9 @@ def potential_board(potential_puzzle):
     return board
 
 @pytest.fixture
-def empty_puzzle():
-    return [[0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0]]
+def potent_board(potent_puzzle):
+    board = SudokuBoard(potent_puzzle)
+    return board
 
 @pytest.fixture
 def edited_puzzle():
@@ -65,30 +62,6 @@ def edited_puzzle():
             [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,9]]
-
-@pytest.fixture
-def unsolved_puzzle():
-    return [[0,2,7,0,3,8,1,0,0],
-            [1,0,4,0,0,2,0,8,0],
-            [0,0,0,7,0,0,4,9,0],
-            [8,7,0,0,0,0,0,0,0],
-            [0,0,0,0,4,0,0,0,0],
-            [0,0,0,0,0,0,0,1,8],
-            [0,3,1,0,0,5,0,0,0],
-            [0,4,0,2,0,0,9,0,7],
-            [0,0,9,3,8,0,2,0,0]]
-
-@pytest.fixture
-def solved_puzzle():
-    return [[9,2,7,4,3,8,1,6,5],
-            [1,5,4,6,9,2,7,8,3],
-            [3,8,6,7,5,1,4,9,2],
-            [8,7,5,1,6,9,3,2,4],
-            [6,1,2,8,4,3,5,7,9],
-            [4,9,3,5,2,7,6,1,8],
-            [2,3,1,9,7,5,8,4,6],
-            [5,4,8,2,1,6,9,3,7],
-            [7,6,9,3,8,4,2,5,1]]
 
 @pytest.fixture
 def ordered_puzzle():
@@ -125,6 +98,17 @@ def unique_puzzle():
             [0,0,0,0,0,0,1,0,0],
             [0,0,0,0,0,0,0,2,0],
             [0,0,0,0,0,0,0,0,3]]
+@pytest.fixture
+def active_puzzle():
+    return [[1,2,0,0,0,0,0,2,1],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,0,2,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,2,0,1,2,0],
+            [0,0,0,0,1,0,0,0,0],
+            [0,0,0,0,0,0,0,2,1]]
 
 @pytest.fixture
 def broken_puzzle():
@@ -149,6 +133,18 @@ def potential_puzzle():
             [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,2,0,0,0,0]]
+
+@pytest.fixture
+def potent_puzzle():
+    return [[0,0,0,0,1,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,3,0,0,0,0,0],
+            [2,0,0,0,4,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0]]
 
 def test_empty_board_initialized(empty_board):
     assert empty_board
@@ -188,15 +184,15 @@ def test_boxed_board_grabs_box(boxed_board):
     assert boxed_board.grab_box(first_index) == first_box
     assert boxed_board.grab_box(last_index) == last_box
 
-def test_boxed_board_ranges_pos_to_box(boxed_board):
+def test_boxed_board_converts_pos_to_box(boxed_board):
     first_row = 0
     first_col = 0
     first_box = 0
     last_row = 8
     last_col = 8
     last_box = 8
-    assert boxed_board.range_pos_to_box(first_row, first_col) == first_box
-    assert boxed_board.range_pos_to_box(last_row, last_col) == last_box
+    assert boxed_board.convert_pos_to_box(first_row, first_col) == first_box
+    assert boxed_board.convert_pos_to_box(last_row, last_col) == last_box
 
 def test_boxed_board_ranges_box_to_row(boxed_board):
     upper_left_box = 0
@@ -284,10 +280,67 @@ def test_solved_board_evaluates_board(solved_board):
 def test_unsolved_board_not_evaluates_board(unsolved_board):
     assert not unsolved_board.evaluate_board()
 
-def test_solved_board_evaluate_pos(solved_board):
+def test_active_board_grabs_active(active_board):
+    entire = [1,2,0,0,0,0,0,2,1]
+    active = [1,2,2,1]
+    assert active_board.grab_active(entire) == active
+
+def test_active_board_grabs_active_row(active_board):
+    active_row = [1,2,2,1]
+    active_index = 0
+    assert active_board.grab_active_row(active_index) == active_row
+
+def test_active_board_grabs_active_col(active_board):
+    active_col = [1,2,2,1]
+    active_index = 4
+    assert active_board.grab_active_col(active_index) == active_col
+
+def test_active_board_grabs_active_box(active_board):
+    active_box = [1,2,2,1]
+    active_index = 8
+    assert active_board.grab_active_box(active_index) == active_box
+
+def test_active_board_checks(active_board):
+    nearfull = [1,2,3,4,5,6,7,8]
+    assert active_board.check(nearfull)
+
+def test_active_board_not_checks(active_board):
+    repeated = [1,2,2,1]
+    assert not active_board.check(repeated)
+
+def test_unique_board_checks_row(unique_board):
     row = 0
-    col = 0
-    assert solved_board.evaluate_pos(row, col)
+    assert unique_board.check_row(row)
+
+def test_active_board_not_checks_row(active_board):
+    row = 0
+    assert not active_board.check_row(row)
+
+def test_unique_board_checks_col(unique_board):
+    col = 4
+    assert unique_board.check_col(col)
+
+def test_active_board_not_checks_col(active_board):
+    col = 4
+    assert not active_board.check_col(col)
+
+def test_unique_board_checks_box(unique_board):
+    box = 8
+    assert unique_board.check_box(box)
+    
+def test_active_board_not_checks_box(active_board):
+    box = 8
+    assert not active_board.check_box(box)
+
+def test_potent_board_checks_pos(potent_board):
+    row = 4
+    col = 4
+    assert potent_board.check_pos(row, col)
+
+def test_active_board_not_checks_pos(active_board):
+    row = 0
+    col = 4
+    assert not active_board.check_pos(row, col)
 
 def test_unique_board_grabs_potential(unique_board):
     unique = [1,2,3]
