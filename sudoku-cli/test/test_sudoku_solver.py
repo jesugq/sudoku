@@ -1,7 +1,7 @@
 import pytest
 from sudoku_solver import SudokuSolver
 
-run_solve_tests = True
+run_solve_tests = False
 
 @pytest.fixture
 def default_solver():
