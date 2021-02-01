@@ -63,3 +63,9 @@ class SudokuSquares:
                     if square.number == self.array[self.grid[i][j]].number:
                         return False
         return True
+
+    def check_unique_in_pos(self, row:int, col:int):
+        if not self.check_unique_in_row(row, col): return False
+        if not self.check_unique_in_col(row, col): return False
+        if not self.check_unique_in_box(row, col): return False
+        return True

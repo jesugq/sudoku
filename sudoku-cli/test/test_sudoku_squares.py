@@ -50,6 +50,19 @@ def box_squares():
     return squares
 
 @pytest.fixture
+def pos_squares():
+    squares = SudokuSquares()
+    squares.append_square(0, 0, [1])
+    squares.append_square(8, 0, [2])
+    squares.append_square(0, 8, [3])
+    squares.append_square(2, 2, [4])
+    squares.array[0].proceed_potential()
+    squares.array[1].proceed_potential()
+    squares.array[2].proceed_potential()
+    squares.array[3].proceed_potential()
+    return squares
+
+@pytest.fixture
 def default_grid():
     return [[-1,-1,-1,-1,-1,-1,-1,-1,-1],
             [-1,-1,-1,-1,-1,-1,-1,-1,-1],
@@ -161,3 +174,14 @@ def test_box_squares_not_checks_unique_in_box(box_squares):
     col = 0
     box_squares.array[2].number = 1
     assert not box_squares.check_unique_in_box(row, col)
+
+def test_pos_squares_checks_unique_in_pos(pos_squares):
+    row = 0
+    col = 0
+    assert pos_squares.check_unique_in_pos(row, col)
+
+def test_pos_squares_not_checks_unique_in_pos(pos_squares):
+    row = 0
+    col = 0
+    pos_squares.array[3].number = 1
+    assert not pos_squares.check_unique_in_pos(row, col)
