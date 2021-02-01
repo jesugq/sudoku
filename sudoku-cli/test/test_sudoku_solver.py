@@ -1,5 +1,6 @@
 import pytest
 from sudoku_solver import SudokuSolver
+from sudoku_squares import SudokuSquares
 
 run_solve_tests = False
 
@@ -47,16 +48,34 @@ def last_solver():
     return solver
 
 @pytest.fixture
-def unsettled_solver(unsettled_puzzle):
-    solver = SudokuSolver(unsettled_puzzle)
-    solver.guide = 0
-    solver.board.edit_puzzle(9, 1, 8)
+def settled_solver():
+    solver = SudokuSolver()
+    solver.advance_guide()
+    solver.settle_guide()
     return solver
 
 @pytest.fixture
-def unsettled_puzzle():
-    return [[1,2,3,4,5,6,7,8,0],
+def unsettled_solver(unsettled_puzzle):
+    solver = SudokuSolver(unsettled_puzzle)
+    solver.advance_guide()
+    return solver
+
+@pytest.fixture
+def settled_puzzle():
+    return [[1,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0]]
+
+@pytest.fixture
+def unsettled_puzzle():
+    return [[0,1,2,3,4,5,6,7,8],
+            [9,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,0,0],
@@ -71,31 +90,18 @@ def test_default_solver_initialized(default_solver):
 def test_default_solver_default_values(default_solver, empty_puzzle):
     guide = -1
     length = 81
-    potential = [1,2,3,4,5,6,7,8,9]
     assert default_solver.guide == guide
     assert default_solver.board.puzzle == empty_puzzle
-    assert len(default_solver.squares) == length
-    index = 0
-    for i in range(9):
-        for j in range(9):
-            assert default_solver.squares[index].row == i
-            assert default_solver.squares[index].col == j
-            assert default_solver.squares[index].potential == potential
-            index += 1
+    assert type(default_solver.squares) is SudokuSquares
+    assert default_solver.squares.get_length() == length
 
 def test_unsolved_solver_default_values(unsolved_solver, unsolved_puzzle):
+    guide = -1
+    length = 53
+    assert unsolved_solver.guide == guide
     assert unsolved_solver.board.puzzle == unsolved_puzzle
-    assert len(unsolved_solver.squares) == 53
-    first_index = 0
-    first_potential = [5,6,9]
-    last_index = 52
-    last_potential = [1,4,5,6]
-    assert unsolved_solver.squares[first_index].row == 0
-    assert unsolved_solver.squares[first_index].col == 0
-    assert unsolved_solver.squares[first_index].potential == first_potential
-    assert unsolved_solver.squares[last_index].row == 8
-    assert unsolved_solver.squares[last_index].col == 8
-    assert unsolved_solver.squares[last_index].potential == last_potential
+    assert type(unsolved_solver.squares) is SudokuSquares
+    assert unsolved_solver.squares.get_length() == length
 
 def test_middle_solver_advances_guide(middle_solver):
     assert middle_solver.guide == 40
@@ -117,25 +123,15 @@ def test_first_solver_not_backtracks_guide(first_solver):
     assert not first_solver.backtrack_guide()
     assert first_solver.guide == 0
 
-def test_first_solver_settles_square_guide(first_solver):
-    guide = 0
-    pindex = 0
-    number = 1
-    potential = [1,2,3,4,5,6,7,8,9]
-    assert first_solver.settle_square_guide()
-    assert first_solver.squares[guide].pindex == pindex
-    assert first_solver.squares[guide].number == number
-    assert first_solver.squares[guide].potential == potential
+def test_first_solver_settles_guide(first_solver):
+    assert first_solver.settle_guide()
 
-def test_unsettled_solver_not_settles_square_guide(unsettled_solver):
-    guide = 0
-    pindex = -1
-    number = 0
-    potential = [9]
-    assert not unsettled_solver.settle_square_guide()
-    assert unsettled_solver.squares[guide].pindex == pindex
-    assert unsettled_solver.squares[guide].number == number
-    assert unsettled_solver.squares[guide].potential == potential
+def test_unsettled_solver_not_settles_guide(unsettled_solver):
+    assert not unsettled_solver.settle_guide()
+
+def test_settled_solver_settles_puzzle(settled_solver, settled_puzzle):
+    settled_solver.settle_puzzle()
+    assert settled_solver.board.puzzle == settled_puzzle
 
 @pytest.mark.skipif(not run_solve_tests, reason='solves an unsolved sudoku')
 def test_unsolved_solver_solves_sudoku(unsolved_solver, solved_puzzle):
