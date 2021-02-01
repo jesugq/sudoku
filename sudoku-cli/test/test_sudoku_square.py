@@ -27,7 +27,7 @@ def middle_square():
     return square
 
 def test_default_square_class_initialized(default_square):
-    assert default_square
+    assert type(default_square) is SudokuSquare
 
 def test_default_square_class_default_values(default_square):
     pindex: int = -1

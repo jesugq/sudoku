@@ -66,7 +66,7 @@ def unsettled_puzzle():
             [0,0,0,0,0,0,0,0,0]]
 
 def test_default_solver_initialized(default_solver):
-    assert default_solver
+    assert type(default_solver) is SudokuSolver
 
 def test_default_solver_default_values(default_solver, empty_puzzle):
     guide = -1

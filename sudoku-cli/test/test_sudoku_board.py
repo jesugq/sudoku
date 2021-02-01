@@ -147,7 +147,7 @@ def potent_puzzle():
             [0,0,0,0,0,0,0,0,0]]
 
 def test_empty_board_initialized(empty_board):
-    assert empty_board
+    assert type(empty_board) is SudokuBoard
 
 def test_empty_board_default_values(empty_board, empty_puzzle):
     assert empty_board.puzzle == empty_puzzle
