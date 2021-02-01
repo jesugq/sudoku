@@ -27,8 +27,8 @@ class SudokuBoard:
         return [row[col] for row in self.puzzle]
 
     def grab_box(self, box: int) -> List[int]:
-        range_row: int = self.range_box_to_row(box)
-        range_col: int = self.range_box_to_col(box)
+        range_row: List[int] = self.range_box_to_row(box)
+        range_col: List[int] = self.range_box_to_col(box)
         numbers: List = []
         for i in range_row:
             for j in range_col:
