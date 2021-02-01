@@ -8,12 +8,33 @@ def default_squares():
     return squares
 
 @pytest.fixture
-def appended_squares():
+def one_squares():
     squares = SudokuSquares()
     row = 0
     col = 0
     potential = [1,2,3]
     squares.append_square(row, col, potential)
+    return squares
+
+@pytest.fixture
+def ten_squares():
+    squares = SudokuSquares()
+    squares.append_square(0, 0, [1,2,3,4,5,6,7,8,9])
+    for i in range(1,9):
+        squares.append_square(0, i, [i])
+        squares.settle_square(i)
+    squares.append_square(1, 0, [9])
+    squares.settle_square(9)
+    return squares
+
+@pytest.fixture
+def unpotential_squares():
+    squares = SudokuSquares()
+    potential = [1,2,3,4,5,6,7,8,9]
+    for i in range(9):
+        for j in range(9):
+            squares.append_square(i, j, potential)
+    squares.array[80].potential = []
     return squares
 
 @pytest.fixture
@@ -97,18 +118,49 @@ def test_default_squares_class_default_values(default_squares, default_grid):
     assert default_squares.grid == default_grid
 
 def test_default_squares_appends_square(default_squares, appended_grid):
+    index = 0
     row = 4
     col = 4
+    pindex = -1
+    number = 0
     potential = [1,2,3]
     default_squares.append_square(row, col, potential)
-    index = 0
     assert default_squares.index == index
-    assert type(default_squares.array[0]) is SudokuSquare
+    assert type(default_squares.array[index]) is SudokuSquare
     assert default_squares.grid == appended_grid
+    assert default_squares.array[index].pindex == pindex
+    assert default_squares.array[index].number == number
+    assert default_squares.array[index].potential == potential
+
+def test_one_squares_settles_square(one_squares):
+    index = 0
+    pindex = 0
+    number = 1
+    potential = [1,2,3]
+    assert one_squares.settle_square(index)
+    assert one_squares.array[index].pindex == pindex
+    assert one_squares.array[index].number == number
+    assert one_squares.array[index].potential == potential
+
+def test_ten_squares_not_settles_square(ten_squares):
+    index = 0
+    pindex = -1
+    number = 0
+    potential = [1,2,3,4,5,6,7,8,9]
+    assert not ten_squares.settle_square(index)
+    assert ten_squares.array[index].pindex == pindex
+    assert ten_squares.array[index].number == number
+    assert ten_squares.array[index].potential == potential
 
 def test_default_squares_gets_length(default_squares):
     length = 0
     assert default_squares.get_length() == length
+
+def test_unpotential_squares_gets_unpotential(unpotential_squares):
+    assert unpotential_squares.get_unpotential()
+
+def test_default_squares_not_gets_unpotential(default_squares):
+    assert not default_squares.get_unpotential()
 
 def test_default_squares_converts_pos_to_box(default_squares):
     first_row = 0

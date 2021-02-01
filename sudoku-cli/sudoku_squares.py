@@ -18,9 +18,23 @@ class SudokuSquares:
         self.array.append(SudokuSquare(row, col, potential))
         self.grid[row][col] = self.index
 
+    def settle_square(self, index: int) -> bool:
+        square = self.array[index]
+        while square.proceed_potential():
+            if self.check_unique_in_pos(square.row, square.col):
+                return True
+        square.reset_square()
+        return False
+
     def get_length(self):
         return self.index + 1
 
+    def get_unpotential(self):
+        for index in range(self.get_length()):
+            if self.array[index].potential == []:
+                return True
+        return False
+            
     def convert_pos_to_box(self, row: int, col: int) -> int:
         region_row: int = int(row / 3)
         region_col: int = int(col / 3)
